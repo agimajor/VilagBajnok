@@ -23,8 +23,7 @@ Törekedtem a lehető leglogikusabban felépítésre, hogy egyértelmű legyen a
 
 
 Végül pedig szeretném megemlíteni, hogy egy weboldal is létrejött az alkalmazáshoz, hogy eredményeidet összehasonlíthasd a többi felhasználóéval,
-ezt a vilagbajnok.nhely.hu címen tudod elérni.
-
+ezt a  következő címen tudod elérni: http://vilagbajnok.nhely.hu/
 
 Kellemes játékot és egyben tanulást kívánok!
 
