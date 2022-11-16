@@ -18,8 +18,8 @@ Törekedtem a lehető leglogikusabban felépítésre, hogy egyértelmű legyen a
  - Fontosnak tartom megemlíteni, hogy a tesztek kérdésbankkal dolgoznak, így érdemes 1-1 pályát többször is kijátszani,
    hiszen új kérdések jelenhetnek meg.
  - Ha már van lejátszott köröd a szűrő mezőre visszatérve különböző ikonok jelölik az előrehaladásaid:
-    👣 - már próbálkoztál a tesztel, de az eredmény még nem az igazi
-    🚩 - sikeresen elfoglaltad a területet, szép teljesítmény, viszont a gyakorlás ilyenkor sem árt 
+    - 👣 - már próbálkoztál a tesztel, de az eredmény még nem az igazi
+    - 🚩 - sikeresen elfoglaltad a területet, szép teljesítmény, viszont a gyakorlás ilyenkor sem árt 
 
 
 Végül pedig szeretném megemlíteni, hogy egy weboldal is létrejött az alkalmazáshoz, hogy eredményeidet összehasonlíthasd a többi felhasználóéval,
