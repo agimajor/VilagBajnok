@@ -1,40 +1,24 @@
-
+from PySide2 import QtCore
 import PySide2.QtWidgets as QtWidgets
-# -*- coding: utf-8 -*-
-from mysql.connector import MySQLConnection
-import mysql
-################################################################################
-## Form generated from reading UI file 'kerdoiv-teljXGZcNs.ui'
-##
-## Created by: Qt User Interface Compiler version 5.14.1
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
-
-from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
-    QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
-    QRadialGradient)
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QRect, QSize)
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import *
 import logo_rc
 import subprocess
-#from PyQt5.QtCore import *
-import sys
 from functions import Message, Connection
 import conFilter
+
 
 class Quest_MainWindow(object):
     def __init__(self, name):
         self.name = name
         self.next = False
-        #self.window = MainWindow
     def setupUi(self, MainWindow):
         if MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         self.window = MainWindow
+        self.window.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
         self.window.setWindowIcon(QIcon('globe_world_earth_planets_chool_icon_209251.png'))
-        #MainWindow.resize(932, 710)
         MainWindow.resize(932, 520)
         MainWindow.setStyleSheet(u"background-color: rgb(210, 210, 210);\n"
                                  "")
@@ -60,7 +44,7 @@ class Quest_MainWindow(object):
 
         self.logoL = QLabel(self.headerF)
         self.logoL.setObjectName(u"logoL")
-        self.logoL.setMaximumSize(QSize(288, 132))
+        self.logoL.setMaximumSize(QSize(216, 99))
         self.logoL.setStyleSheet(u"border-image: url(:/logo/logo.png);")
 
         self.horizontalLayout.addWidget(self.logoL)
@@ -293,27 +277,26 @@ class Quest_MainWindow(object):
         self.nextPB.clicked.connect(self.Quest)
 
 
-
-
     def Quest(self):
         self.nextPB.setEnabled(False)
         con, cur = Connection()
 
         if con is None:
             Message("HIBAÜZENET", "Adatbázis kapcsolati hiba! Ellenőrizd az internetelérésed!")
-            self.nextPB.setEnabled(True)
+            self.window.close()
+            subprocess.call(["python", "opener.py"])
 
         else:
-            count = 0
-            self.gender = 100
             self.school = 100
             self.other = 100
             self.object = 100
             self.topic = 100
+            self.gender = 100
+            count = 0
 
-            list = [self.girlRB, self.boyRB]
-            for i in range(len(list)):
-                if list[i].isChecked() == True:
+            answers = [self.girlRB, self.boyRB]
+            for i in range(len(answers)):
+                if answers[i].isChecked() == True:
                     count += 1
                     self.gender = i
 
@@ -323,10 +306,10 @@ class Quest_MainWindow(object):
 
             else:
                 count = 0
-                list = [self.yes2RB, self.no2RB]
+                answers = [self.yes2RB, self.no2RB]
 
-                for i in range(len(list)):
-                    if list[i].isChecked() == True:
+                for i in range(len(answers)):
+                    if answers[i].isChecked() == True:
                         self.school = i
                         count += 1
 
@@ -336,10 +319,10 @@ class Quest_MainWindow(object):
 
                 else:
                     count = 0
-                    list = [self.yes3RB, self.no3RB]
+                    answers = [self.yes3RB, self.no3RB]
 
-                    for i in range(len(list)):
-                        if list[i].isChecked() == True:
+                    for i in range(len(answers)):
+                        if answers[i].isChecked() == True:
                             self.other = i
                             count += 1
 
@@ -349,10 +332,10 @@ class Quest_MainWindow(object):
 
                     else:
                         count = 0
-                        list = [self.one1RB, self.two1RB, self.three1RB, self.four1RB, self.five1RB]
+                        answers = [self.one1RB, self.two1RB, self.three1RB, self.four1RB, self.five1RB]
 
-                        for i in range(len(list)):
-                            if list[i].isChecked() == True:
+                        for i in range(len(answers)):
+                            if answers[i].isChecked() == True:
                                 self.object = i+1
                                 count += 1
 
@@ -362,10 +345,10 @@ class Quest_MainWindow(object):
 
                         else:
                             count = 0
-                            list = [self.one2RB, self.two2RB, self.three2RB, self.four2RB, self.five2RB]
+                            answers = [self.one2RB, self.two2RB, self.three2RB, self.four2RB, self.five2RB]
 
-                            for i in range(len(list)):
-                                if list[i].isChecked() == True:
+                            for i in range(len(answers)):
+                                if answers[i].isChecked() == True:
                                     self.topic = i+1
                                     count += 1
 
@@ -385,7 +368,6 @@ class Quest_MainWindow(object):
         self.window.close()
         name = self.name
         self.window = QtWidgets.QMainWindow()
-        #self.ui = Quest_MainWindow
         self.ui = conFilter.Continents_MainWindow(name)
         self.ui.setupUi(self.window)
         self.window.show()

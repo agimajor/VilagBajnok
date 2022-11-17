@@ -1,10 +1,5 @@
 import numpy as np
-import psycopg2
 import matplotlib.pyplot as plt
-from mysql.connector import MySQLConnection
-import mysql
-from PySide2.QtWidgets import *
-import PySide2.QtWidgets as QtWidgets
 from functions import Connection, Message, clearStr
 
 
@@ -13,7 +8,9 @@ class Chart_MainWindow(object):
         self.name = name
         self.continent = continent
 
-    def points(self):
+
+
+    def points(self): #megjelenítendő pontok meghatározása
         con, cur = Connection()
         if con is not None:
             good_points = 'select pont from eredmenyek where nev = %s and kontinens = %s'
@@ -27,8 +24,14 @@ class Chart_MainWindow(object):
         else:
             Message("HIBAÜZENET", "Adatbázis kapcsolati hiba! Ellenőrizd az internetelérésed!")
 
-    def makeChart(self):
+
+
+
+
+    def makeChart(self): #diagram elkészítése
+
         continents_array = {"afrika":"afrikai", "azsia":"ázsiai", "del-amerika":"dél-amerikai", "eszek-amerika":"észak-amerikai", "europa":"európai", "anktartisz":"anktartiszi", "ausztralia":"ausztráliai"}
+
         range_points = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         frequency_points = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         list_point = self.points()
@@ -37,14 +40,13 @@ class Chart_MainWindow(object):
                 point = int(list_point[p])
                 frequency_points[point] += 1
 
-            x = np.arange(len(range_points))  # the label locations
+            x = np.arange(len(range_points))
             y = np.arange(max(frequency_points)+2)
-            width = 0.50  # the width of the bars
+            width = 0.50
 
             fig, ax = plt.subplots()
             series = ax.bar(x, frequency_points, width, color = 'yellow')
 
-        # Add some text for labels, title and custom x-axis tick labels, etc.
             ax.set_ylabel("Elért pontok gyakorisága")
             ax.set_xlabel("Elért pontok")
 
@@ -60,9 +62,10 @@ class Chart_MainWindow(object):
 
             plt.show()
 
-
-
-
 if __name__ == "__main__":
     chart = Chart_MainWindow()
     chart.makeChart()
+
+
+
+

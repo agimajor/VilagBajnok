@@ -1,46 +1,15 @@
-import time
-
-import PyQt5
 import PySide2.QtWidgets as QtWidgets
-# -*- coding: utf-8 -*-
-from mysql.connector import MySQLConnection
-import mysql
-import numpy as np
 import random
+from PySide2 import QtCore
 from PyQt5.QtCore import QTimer
-################################################################################
-## Form generated from reading UI file 'kerdes-teljVCRFeD.ui'
-##
-## Created by: Qt User Interface Compiler version 5.14.1
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
-from functools import partial
-from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
-    QRect, QSize, QUrl, Qt, QTime)
-
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
-    QRadialGradient)
-from PySide2.QtWidgets import *
 from results import Result_MainWindow
-
-import conFilter
 import logo_rc
 import subprocess
-from functools import partial
-from functions import Message, Connection, clearStr
-
-
-from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
-                            QRect, QSize, QUrl, Qt, QEvent, QTime)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-                           QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
-                           QRadialGradient)
+from functions import Connection, clearStr
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QRect, QSize)
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import *
-
-from random import randint
-
+import conFilter
 
 class Quiz_MainWindow(object):
     def __init__(self, continent, name, point, serial_number):
@@ -53,7 +22,6 @@ class Quiz_MainWindow(object):
         self.goods_list = self.QuestionsList(self.continent)
 
         self.activegame = True
-        #self.count = 1800
         self.timer = QTimer()
         self.timer.timeout.connect(self.ShowTime)
         self.timer.start(1000)
@@ -64,6 +32,7 @@ class Quiz_MainWindow(object):
         if MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         self.window = MainWindow
+        self.window.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
         self.window.setWindowIcon(QIcon('globe_world_earth_planets_chool_icon_209251.png'))
         #MainWindow.resize(1118.4, 852)
         MainWindow.resize(932, 520)
@@ -187,10 +156,7 @@ class Quiz_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"VilágBajnok - Quiz", None))
-        #self.idoL.setText(QCoreApplication.translate("MainWindow", ido, None))
-        #self.idoL.setText("0")
-        #self.idoL.setText("⏳: " + str(self.count))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"VilágBajnok - Kvíz", None))
         self.nextPB.setText(QCoreApplication.translate("MainWindow", u"Tov\u00e1bb", None))
         self.group = QtWidgets.QButtonGroup()
         self.group.addButton(self.answer1)
@@ -205,20 +171,20 @@ class Quiz_MainWindow(object):
             MainWindow.close()
 
     # retranslateUi
-    def ShowTime(self):
-        #self.count += 1
+
+
+    def ShowTime(self): #időmérő
         if self.start:
             self.count += 1
             min = (self.count//60)
             sec = (self.count%60)
             idostr ='⏳: {:02d}:{:02d}'.format(min, sec)
-            #idostr = (self.count)
             self.timeL.setText(idostr)
 
-    def QuestionsList(self, continent):
+    def QuestionsList(self, continent): #kérdéssor meghatározása
         con, cur = Connection()
         if con is not None:
-            good_num = 'select kerdes_id from kerdesek where kategoria =\'' + continent + "\'"
+            good_num = 'select kerdes_id from kerdesek where kontinens =\'' + continent + "\'"
             cur.execute(good_num)
             quiz_num_res = cur.fetchall()
             rand_quiz = set()
@@ -230,7 +196,7 @@ class Quiz_MainWindow(object):
             return None
 
 
-    def startQuestion(self):
+    def startQuestion(self): # indítást támogató engedélyek megadása
         self.nextPB.setEnabled(True)
         self.group.setExclusive(False)
         self.answer1.setChecked(False)
@@ -242,7 +208,7 @@ class Quiz_MainWindow(object):
         self.goodQuestions()
 
 
-    def goodQuestions(self):
+    def goodQuestions(self): #aktuális kérdés megjelenítése
         con, cur = Connection()
         if con is not None and self.goods_list is not None:
             e = str(self.goods_list[self.serial_number])
@@ -252,23 +218,22 @@ class Quiz_MainWindow(object):
             res1 = cur.fetchall()
             res1 = str(list(res1))
             print(res1)
-            self.kerdes, self.v1, self.v2, self.v3, self.v4, self.jo = res1.split(",")
 
-            self.questL.setText(str(self.serial_number + 1) + ". " + clearStr(self.kerdes))
-            self.answer1.setText(clearStr(self.v1))
-            self.answer2.setText(clearStr(self.v2))
-            self.answer3.setText(clearStr(self.v3))
-            self.answer4.setText(clearStr(self.v4))
+            self.quest, self.a1, self.a2, self.a3, self.a4, self.good = res1.split(",")
+
+            self.questL.setText(str(self.serial_number + 1) + ". " + clearStr(self.quest))
+            self.answer1.setText(clearStr(self.a1))
+            self.answer2.setText(clearStr(self.a2))
+            self.answer3.setText(clearStr(self.a3))
+            self.answer4.setText(clearStr(self.a4))
 
             self.nextPB.clicked.connect(self.addCheck)
         else:
             self.start = False
             self.open_continents()
-            #MainWindow.close()
 
 
-
-    def addCheck(self):
+    def addCheck(self): #válasz paraméter átadása
         self.nextPB.setEnabled(False)
         if self.answer1.isChecked():
             self.addPoint(1)
@@ -280,26 +245,15 @@ class Quiz_MainWindow(object):
             self.addPoint(4)
         else:
             self.nextPB.setEnabled(True)
-            #msg = QMessageBox()
-            #msg.setWindowTitle("HIBA")
-            #msg.setIcon(QMessageBox.Warning)
-            #msg.setText("Válaszd ki az általad helyesnek ítélt megoldást mielőtt tovább lépsz!")
-            #msg.exec()
 
+    def addPoint(self, answer): #válaszkiértékelés
 
-    def addPoint(self, answer):
-        print(self.serial_number)
-        if answer == int(clearStr(self.jo)):
-
+        if answer == int(clearStr(self.good)):
             self.point += 1
-
             if self.serial_number == 9 and self.activegame:
                 self.activegame = False
                 self.start = False
-                #QtWidgets.QMainWindow.close(self)
-                #MainWindow.close()
                 self.open_result()
-
 
             elif self.activegame:
                 self.serial_number += 1
@@ -310,34 +264,29 @@ class Quiz_MainWindow(object):
             if self.serial_number == 9 and self.activegame:
                 self.start = False
                 self.activegame = False
-                #QtWidgets.QMainWindow.close(self)
-                #MainWindow.close()
                 self.open_result()
-
 
             elif self.activegame:
                 self.serial_number += 1
                 self.nextQuestion()
 
 
-    def open_result(self):
-        #MainWindow.close()
+    def open_result(self): #erdmény felület meghívása
         self.window.close()
         self.window = QtWidgets.QMainWindow()
         self.ui = Result_MainWindow(self.name, self.point, self.continent, self.count)
         self.ui.setupUi(self.window)
         self.window.show()
-        #MainWindow1.close()
 
-    def open_continents(self):
-
+    def open_continents(self): #szűrőre visszadobás
         self.window.close()
+        name = self.nameLE.text()
         self.window = QtWidgets.QMainWindow()
-        self.ui = conFilter.Continents_MainWindow(self.name)
+        self.ui = conFilter.Continents_MainWindow(name)
         self.ui.setupUi(self.window)
         self.window.show()
 
-    def nextQuestion(self):
+    def nextQuestion(self): #következő kérdés folyamatának elindítása
         self.startQuestion()
 
 

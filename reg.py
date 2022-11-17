@@ -1,30 +1,12 @@
 import PySide2.QtWidgets as QtWidgets
-import subprocess
 from PySide2 import QtCore
-from mysql.connector import MySQLConnection
-import mysql
-
-################################################################################
-## Form generated from reading UI file 'reg-teljrxEbYs.ui'
-##
-## Created by: Qt User Interface Compiler version 5.14.1
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
-
-from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
-                            QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-                           QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
-                           QRadialGradient)
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QRect, QSize)
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import *
-
 import logo_rc
-
 import userInfo
 from functions import Message, Connection
-import opener
-
+import subprocess
 
 
 class Reg_MainWindow(object):
@@ -33,9 +15,9 @@ class Reg_MainWindow(object):
         if MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         self.window = MainWindow
+        self.window.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
         self.window.setWindowIcon(QIcon('globe_world_earth_planets_chool_icon_209251.png'))
         MainWindow.resize(932, 520)
-
         # MainWindow.resize(1118.4, 852)
         MainWindow.setStyleSheet(u"background-color: rgb(210, 210, 210);\n"
                                  "")
@@ -61,7 +43,7 @@ class Reg_MainWindow(object):
 
         self.logoL = QLabel(self.headerF)
         self.logoL.setObjectName(u"logoL")
-        self.logoL.setMaximumSize(QSize(288, 132))
+        self.logoL.setMaximumSize(QSize(216, 99))
         self.logoL.setStyleSheet(u"border-image: url(:/logo/logo.png);")
 
         self.horizontalLayout.addWidget(self.logoL)
@@ -183,31 +165,48 @@ class Reg_MainWindow(object):
         self.pswaL.setText(QCoreApplication.translate("MainWindow", u"Jelsz\u00f3 \u00fajra:", None))
         self.backPB.setText("⇦ Vissza")
         self.passwLE.setPlaceholderText(QCoreApplication.translate("MainWindow", u"legalább 5 karakter", None))
+        self.nameLE.setPlaceholderText(QCoreApplication.translate("MainWindow", u"csak ékezet mentes karakterek", None))
         self.passwL.setText(QCoreApplication.translate("MainWindow", u"Jelsz\u00f3:", None))
         self.regPB.setText(QCoreApplication.translate("MainWindow", u"Regisztr\u00e1ci\u00f3", None))
         # retranslateUi
         self.regPB.clicked.connect(self.RegData)
         self.backPB.clicked.connect(self.BackOpenWindow)
-        # self.backPB.clicked.connect(MainWindow.close)
 
-    def BackOpenWindow(self):
+    def sleepButtons(self): #gombok blokkolása
+        self.regPB.setEnabled(False)
+        self.backPB.setEnabled(False)
+
+    def activeButtons(self): #gombok aktiválása
+        self.regPB.setEnabled(True)
+        self.backPB.setEnabled(True)
+
+    def BackOpenWindow(self): #vissza a nyitóoldalra
+        self.sleepButtons()
         self.window.close()
-        self.window = QtWidgets.QMainWindow()
-        self.ui = opener.HomePage_MainWindow()
-        self.ui.setupUi(self.window)
-        self.window.show()
+        subprocess.call(["python", "opener.py"])
 
-    def RegData(self):
 
-        if len(self.nameLE.text()) == 0 or int(self.ageSB.text()) <= 0 or len(self.passwLE.text()) < 5 or (
-                self.passwLE.text() != self.pswaLE.text()):
-            Message("HIBAÜZENET","Hiba! A kitöltés nem volt megfelelő, kérlek nézd át mindent megadtál-e megfelelően és próbáld újra!")
-            self.regPB.setEnabled(True)
+    def RegData(self): #beírt adatok ellenőrzése
+
+        self.sleepButtons()
+        good_char = True
+        for char in self.nameLE.text():
+            if char.lower() in ["á", "é", "ó", "í", "ú", "ű", "ő"]:
+                good_char = False
+                break
+
+        if len(self.nameLE.text()) == 0 or int(self.ageSB.text()) <= 0 or len(self.passwLE.text()) < 5 or \
+                (self.passwLE.text() != self.pswaLE.text()) or good_char == False:
+            Message("HIBAÜZENET",
+                    "A kitöltés nem volt megfelelő, kérlek nézd át és próbálkozz újra!")
+            self.activeButtons()
+
         else:
             con, cur = Connection()
             if con is None:
                 Message("HIBAÜZENET", "Adatbázis kapcsolati hiba! Ellenőrizd az internetelérésed!")
-                self.regPB.setEnabled(True)
+                self.activeButtons()
+
             else:
                 try:
                     add = "insert into regisztraciok (nev,kor,jelszo) values (%s,%s,%s)"
@@ -217,13 +216,13 @@ class Reg_MainWindow(object):
 
                 except:
                     Message("HIBAÜZENET", "Hiba! Ez a felhasználónév már foglalt!")
-                    self.regPB.setEnabled(True)
+                    self.activeButtons()
 
                 else:
                     self.open_window()
 
 
-    def open_window(self):
+    def open_window(self): #adminisztrációs felületre történő eljuttatás
         self.window.close()
         self.window = QtWidgets.QMainWindow()
         name = self.nameLE.text()

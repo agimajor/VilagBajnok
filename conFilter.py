@@ -1,28 +1,9 @@
-
 import PySide2.QtWidgets as QtWidgets
-import psycopg2
-# -*- coding: utf-8 -*-
-from mysql.connector import MySQLConnection
-import mysql
-import random
-import sys
-################################################################################
-## Form generated from reading UI file 'kontinensekhbkAZr.ui'
-##
-## Created by: Qt User Interface Compiler version 5.14.1
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
 from PySide2 import QtCore
-from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
-    QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
-    QRadialGradient)
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QRect, QSize)
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import *
 from questions import Quiz_MainWindow
-from opener import HomePage_MainWindow
-
 import kontinens_rc
 import subprocess
 from functions import Message, Connection, clearStr
@@ -31,9 +12,7 @@ class Continents_MainWindow(object):
     def __init__(self, name):
         self.name = name
 
-
     def setupUi(self, MainWindow):
-        #MainWindow.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)
         MainWindow.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
         if MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
@@ -142,7 +121,6 @@ class Continents_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"VilágBajnok - Válassz Kontinenst!", None))
-        #self.bgL.setText("")
         self.filterL.setText("")
         self.eaPB.setText(QCoreApplication.translate("MainWindow", u"\u00c9szak-Amerika", None))
         self.daPB.setText(QCoreApplication.translate("MainWindow", u"D\u00e9l-Amerika ", None))
@@ -155,23 +133,16 @@ class Continents_MainWindow(object):
 
         self.Start()
         self.eaPB.clicked.connect(self.eaContinent)
-        #self.eaPB.clicked.connect(MainWindow.close)
         self.daPB.clicked.connect(self.daContinent)
-        #self.daPB.clicked.connect(MainWindow.close)
         self.ankPB.clicked.connect(self.ankContinent)
-        #self.ankPB.clicked.connect(MainWindow.close)
         self.euPB.clicked.connect(self.euContinent)
-        #self.euPB.clicked.connect(MainWindow.close)
         self.afPB.clicked.connect(self.afContinent)
-        #self.afPB.clicked.connect(MainWindow.close)
         self.azsPB.clicked.connect(self.azsContinent)
-        #self.azsPB.clicked.connect(MainWindow.close)
         self.auPB.clicked.connect(self.auContinent)
-        #self.auPB.clicked.connect(MainWindow.close)
         self.logoutPB.clicked.connect(self.Logout)
-        #self.logoutPB.clicked.connect(MainWindow.close)
 
-    def Start(self):
+
+    def Start(self): #korábbi eredmények szemléltetése
         con, cur = Connection()
         if con is None:
             Message("HIBAÜZENET", "Adatbázis kapcsolati hiba! Ellenőrizd az internetelérésed!")
@@ -187,7 +158,6 @@ class Continents_MainWindow(object):
 
                 for i in range(len(con_diff)):
                     cont = con_diff[i]
-                    #points = f'select pont from eredmeny where kontinens ={cont} and nev = {self.name}'
                     points = "select pont from eredmeny where nev = %s and kontinens = %s"
                     cur.execute(points, (self.name, cont))
                     point_res = cur.fetchall()
@@ -245,17 +215,13 @@ class Continents_MainWindow(object):
                             else:
                                 self.daL.setText("👣")
 
-
-    # retranslateUi
-    def Logout(self):
-        self.window.close()
+    def Logout(self): #nyitó felület meghívása
         self.sleepButtons()
-        self.window = QtWidgets.QMainWindow()
-        self.ui = HomePage_MainWindow()
-        self.ui.setupUi(self.window)
-        self.window.show()
+        self.window.close()
+        subprocess.call(["python", "opener.py"])
 
-    def sleepButtons(self):
+
+    def sleepButtons(self): #gombok blokkolása
         self.eaPB.setEnabled(False)
         self.daPB.setEnabled(False)
         self.ankPB.setEnabled(False)
@@ -264,7 +230,7 @@ class Continents_MainWindow(object):
         self.azsPB.setEnabled(False)
         self.auPB.setEnabled(False)
 
-    def activeButtons(self):
+    def activeButtons(self): #gombok aktiválása
         self.eaPB.setEnabled(True)
         self.daPB.setEnabled(True)
         self.ankPB.setEnabled(True)
@@ -273,50 +239,35 @@ class Continents_MainWindow(object):
         self.azsPB.setEnabled(True)
         self.auPB.setEnabled(True)
 
-    def eaContinent(self):
+    def eaContinent(self): #paraméterátadás
         self.sleepButtons()
         self.chooseContinent("eszak-amerika")
-        #MainWindow.close()
 
-
-    def daContinent(self):
+    def daContinent(self): #paraméterátadás
         self.sleepButtons()
         self.chooseContinent("del-amerika")
-        #MainWindow.close()
 
-
-    def ankContinent(self):
+    def ankContinent(self): #paraméterátadás
         self.sleepButtons()
         self.chooseContinent("antarktisz")
-        #MainWindow.close()
 
-
-    def euContinent(self):
+    def euContinent(self): #paraméterátadás
         self.sleepButtons()
         self.chooseContinent("europa")
-        #MainWindow.close()
 
-
-    def afContinent(self):
+    def afContinent(self): #paraméterátadás
         self.sleepButtons()
         self.chooseContinent("afrika")
-        #MainWindow.close()
 
-
-    def azsContinent(self):
+    def azsContinent(self): #paraméterátadás
         self.sleepButtons()
         self.chooseContinent("azsia")
-        #MainWindow.close()
 
-
-    def auContinent(self):
+    def auContinent(self): #paraméterátadás
         self.sleepButtons()
         self.chooseContinent("ausztralia")
-        #MainWindow.close()
 
-
-    def chooseContinent(self, continent):
-
+    def chooseContinent(self, continent): #paraméternek megfelelő kvíz indító meghívása
         con, cur = Connection()
         if con is None:
             Message("HIBAÜZENET", "Adatbázis kapcsolati hiba! Ellenőrizd az internetelérésed!")
@@ -330,7 +281,6 @@ class Continents_MainWindow(object):
             self.ui = Quiz_MainWindow(continent, name, point, serial_number)
             self.ui.setupUi(self.window)
             self.window.show()
-
 
 
 if __name__ == "__main__":

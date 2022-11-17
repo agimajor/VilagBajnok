@@ -1,38 +1,13 @@
 import PySide2.QtWidgets as QtWidgets
-# -*- coding: utf-8 -*-
-
-################################################################################
-## Form generated from reading UI file 'udv-teljKdEOrj.ui'
-##
-## Created by: Qt User Interface Compiler version 5.14.1
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
-
-from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
-    QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
-    QRadialGradient)
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QRect, QSize)
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import *
-
 import hatter_rc
-
 import subprocess
-import login
-import reg
-import info
-
-#from reg import Ui_MainWindow2
 
 
 
 class HomePage_MainWindow(object):
-    #def reg(self):
-        #self.window2 = QtWidgets.QMainWindow()
-        #self.ui = Ui_MainWindow2()
-        #self.ui.setupUi(self.window2)
-        #self.window2.show()
     def setupUi(self, MainWindow):
         if MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
@@ -85,9 +60,9 @@ class HomePage_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
+
+
     # setupUi
-
-
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"VilágBajnok - Kezdőlap", None))
@@ -96,49 +71,44 @@ class HomePage_MainWindow(object):
         self.loginPB.setText(QCoreApplication.translate("MainWindow", u"Bejelentkez\u00e9s", None))
         self.regPB.setText(QCoreApplication.translate("MainWindow", u"Regisztr\u00e1ci\u00f3", None))
         self.desPB.setText(QCoreApplication.translate("MainWindow", u"J\u00e1t\u00e9k le\u00edr\u00e1s", None))
+
+
         self.regPB.clicked.connect(MainWindow.close)
         self.regPB.clicked.connect(self.openReg)
+
+
         self.loginPB.clicked.connect(MainWindow.close)
         self.loginPB.clicked.connect(self.openLogin)
         self.desPB.clicked.connect(MainWindow.close)
         self.desPB.clicked.connect(self.openDescription)
 
 
-    def sleepButtons(self):
+    def sleepButtons(self): #gombok blokkolása
         self.regPB.setEnabled(False)
         self.loginPB.setEnabled(False)
         self.desPB.setEnabled(False)
 
-    def openReg(self):
+    def openReg(self): #regisztrációs felület meghívása
         self.sleepButtons()
-        #subprocess.call(["python", "reg.exe"])
-        self.window = QtWidgets.QMainWindow()
-        self.ui = reg.Reg_MainWindow()
-        self.ui.setupUi(self.window)
-        self.window.show()
+        subprocess.call(["python", "reg.py"])
 
-    def openLogin(self):
-        self.sleepButtons()
-        #subprocess.call(["python", "login.exe"])
-        self.window = QtWidgets.QMainWindow()
-        self.ui = login.Login_MainWindow()
-        self.ui.setupUi(self.window)
-        self.window.show()
 
-    def openDescription(self):
+    def openLogin(self): #bejelentkező felület meghívása
         self.sleepButtons()
-        #subprocess.call(["python", "info.exe"])
-        self.window = QtWidgets.QMainWindow()
-        self.ui = info.Ui_MainWindow()
-        self.ui.setupUi(self.window)
-        self.window.show()
+        subprocess.call(["python", "login.py"])
+
+
+    def openDescription(self): #információs oldal meghívása
+        self.sleepButtons()
+        subprocess.call(["python", "info.py"])
+
+
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-
     ui = HomePage_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()

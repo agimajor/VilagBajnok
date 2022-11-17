@@ -1,29 +1,11 @@
-
+from PySide2 import QtCore
 import PySide2.QtWidgets as QtWidgets
-# -*- coding: utf-8 -*-
-from mysql.connector import MySQLConnection
-import mysql
-import random
-import psycopg2
-################################################################################
-## Form generated from reading UI file 'eredmeny-teljflOadC.ui'
-##
-## Created by: Qt User Interface Compiler version 5.14.1
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
-
-from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
-    QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
-    QRadialGradient)
-#from PyQt5.QtWidgets import QWidget,QPushButton,QApplication,QListWidget,QGridLayout,QLabel
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QRect, QSize)
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import *
 import conFilter
 import questions
 import logo_rc
-import subprocess
 from chart import Chart_MainWindow
 from functions import Connection, Message, clearStr
 
@@ -39,6 +21,7 @@ class Result_MainWindow(object):
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(932, 520)
         self.window = MainWindow
+        self.window.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
         self.window.setWindowIcon(QIcon('globe_world_earth_planets_chool_icon_209251.png'))
         #MainWindow.resize(1118.4, 852)
         MainWindow.setStyleSheet(u"background-color: rgb(210, 210, 210);\n"
@@ -204,43 +187,36 @@ class Result_MainWindow(object):
         self.resultsPB.setText(QCoreApplication.translate("MainWindow", u"Eredm\u00e9nyeim", None))
         self.menuPB.setText(QCoreApplication.translate("MainWindow", u"Men\u00fc", None))
         self.againPB.setText(QCoreApplication.translate("MainWindow", u"\u00dajra", None))
-
-
-            # retranslateUi
-
         self.pointInDb()
         self.menuPB.clicked.connect(self.openContinents)
         self.againPB.clicked.connect(self.openKerdes)
         self.resultsPB.clicked.connect(self.openChart)
 
-    def sleepButtons(self):
+    def sleepButtons(self):#gombok blokkolása
         self.menuPB.setEnabled(False)
         self.againPB.setEnabled(False)
         self.resultsPB.setEnabled(False)
 
-    def activedButtons(self):
+    def activedButtons(self): #gombok aktiválása
         self.menuPB.setEnabled(True)
         self.againPB.setEnabled(True)
         self.resultsPB.setEnabled(True)
 
-    def openChart(self):
+    def openChart(self): #diagram meghívása
         chart = Chart_MainWindow(self.name, self.continent)
         chart.makeChart()
 
-    def openContinents(self):
-        con, cur = Connection()
-        if con is not None:
-            self.sleepButtons()
-            self.window.close()
-            self.window = QtWidgets.QMainWindow()
-            self.ui = conFilter.Continents_MainWindow(self.name)
-            self.ui.setupUi(self.window)
-            self.window.show()
-        else:
-            Message("HIBAÜZENET", "Adatbázis kapcsolati hiba! Ellenőrizd az internetelérésed!")
-            self.activedButtons()
+    def openContinents(self): #szűrő felület meghívása
+        self.sleepButtons()
+        self.window.close()
+        name = self.name
+        self.window = QtWidgets.QMainWindow()
+        self.ui = conFilter.Continents_MainWindow(name)
+        self.ui.setupUi(self.window)
+        self.window.show()
 
-    def openKerdes(self):
+
+    def openKerdes(self): #kvíz elindítása
         con, cur = Connection()
         if con is not None:
             self.sleepButtons()
@@ -253,11 +229,14 @@ class Result_MainWindow(object):
             self.window.show()
 
         else:
-            Message("HIBAÜZENET", "Adatbázis kapcsolati hiba! Ellenőrizd az internetelérésed!")
-            self.activedButtons()
+            self.window.close()
+            self.window = QtWidgets.QMainWindow()
+            self.ui = conFilter.Continents_MainWindow(self.name)
+            self.ui.setupUi(self.window)
+            self.window.show()
 
 
-    def pointInDb(self):
+    def pointInDb(self): #adatbázis adminisztráció 1
 
         con, cur = Connection()
         if con is None:
@@ -271,11 +250,8 @@ class Result_MainWindow(object):
             if len(res) > 0:
                 lista = []
                 lista.append(res.split(' '))
-                print(lista[0])
-
                 if (self.point > int(lista[0][0])) or ((self.point == int(lista[0][0])) and (int(self.time) < int(lista[0][1]))):
-                #add = 'update %s set pont = %s, jatek = %s where nev = %s'
-                #cur.execute(add, (self.continent, self.point, int(lista[0][1]) + 1, self.name))
+
                     add = 'update eredmeny set pont = %s, ido = %s, jatek = %s, ossz = %s where nev = %s and kontinens = %s'
                     cur.execute(add, (self.point, int(lista[0][1]), int(lista[0][2]) + 1, int(lista[0][3]) + self.point, self.name, self.continent ))
                     con.commit()
@@ -285,21 +261,17 @@ class Result_MainWindow(object):
                 else:
                     add = 'update eredmeny set jatek = %s, ossz = %s where nev = %s and kontinens = %s'
                     cur.execute(add, (int(lista[0][2]) + 1, int(lista[0][3]) + self.point, self.name, self.continent))
-                #add = 'update %s set jatek = %s where nev = %s'
-                #cur.execute(add, (self.continent, int(lista[0][1]) + 1, self.name))
                     con.commit()
                     con.close()
                     self.addResults()
             else:
-            #add = "insert into %s (nev,kontinens,pont,jatek) values (%s,%s,%s,%s)"
-            #cur.execute(add, (self.continent, self.name, self.continent, self.point, 1))
                 add = "insert into eredmeny (nev,kontinens,pont,ido,jatek,ossz) values (%s,%s,%s,%s,%s,%s)"
                 cur.execute(add, (self.name, self.continent, self.point, int(self.time), 1, self.point))
                 con.commit()
                 con.close()
                 self.addResults()
 
-    def addResults(self):
+    def addResults(self): #adatbázis adminisztráció 2
         con, cur = Connection()
         id = self.newId()
         print(id)
@@ -312,7 +284,7 @@ class Result_MainWindow(object):
             con.commit()
             con.close()
 
-    def newId(self):
+    def newId(self): #kulcs meghatározása
         con, cur = Connection()
         if con is None:
             return None

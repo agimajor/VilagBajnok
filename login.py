@@ -1,33 +1,20 @@
-
 import PySide2.QtWidgets as QtWidgets
-# -*- coding: utf-8 -*-
-from mysql.connector import MySQLConnection
-import mysql
-################################################################################
-## Form generated from reading UI file 'bej-teljxrHTyX.ui'
-##
-## Created by: Qt User Interface Compiler version 5.14.1
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
-
-from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
-    QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
-    QRadialGradient)
+from PySide2 import QtCore
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QRect, QSize, QUrl, Qt)
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import *
-from conFilter import Continents_MainWindow
+import conFilter
 import logo_rc
 import subprocess
 from functions import Message, Connection
-import opener
+
 
 class Login_MainWindow(object):
     def setupUi(self, MainWindow):
         if MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         self.window = MainWindow
+        self.window.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
         self.window.setWindowIcon(QIcon('globe_world_earth_planets_chool_icon_209251.png'))
         MainWindow.resize(932, 520)
         #MainWindow.resize(1118.4, 852)
@@ -145,25 +132,33 @@ class Login_MainWindow(object):
         self.loginPB.setText(QCoreApplication.translate("MainWindow", u"Bejelentkez\u00e9s", None))
         self.loginPB.clicked.connect(self.LogIn)
         self.backPB.clicked.connect(self.BackOpenWindow)
-        #self.setWindowIcon(QIcon(""));
 
-    def BackOpenWindow(self):
-        #MainWindow.close()
+    def sleepButtons(self): #gombok blokkolása
+        self.loginPB.setEnabled(False)
+        self.backPB.setEnabled(False)
+
+    def activeButtons(self): #gombok aktiválása
+        self.loginPB.setEnabled(True)
+        self.backPB.setEnabled(True)
+
+    def BackOpenWindow(self): #nyitó oldal meghívása
+        self.sleepButtons()
         self.window.close()
-        self.window = QtWidgets.QMainWindow()
-        self.ui = opener.HomePage_MainWindow()
-        self.ui.setupUi(self.window)
-        self.window.show()
+        subprocess.call(["python", "opener.py"])
+        #self.window = QtWidgets.QMainWindow()
+        #self.ui = opener.HomePage_MainWindow()
+        #self.ui.setupUi(self.window)
+        #self.window.show()
 
         #subprocess.call(["python", "opener.py"])
 
-    def LogIn(self):
+    def LogIn(self): #bejelentkezés ellenőrzése
 
-        self.loginPB.setEnabled(False)
+        self.sleepButtons()
         con, cur = Connection()
         if con is None:
             Message("HIBAÜZENET", "Adatbázis kapcsolati hiba! Ellenőrizd az internetelérésed!")
-            self.loginPB.setEnabled(True)
+            self.activeButtons()
 
         else:
             try:
@@ -173,23 +168,22 @@ class Login_MainWindow(object):
 
             except TypeError:
                 Message("HIBAÜZENET", "Hoppá valami probléma adódott! Ellenőrizd a beírt adatokat, majd próbálkozz újra!")
-                self.loginPB.setEnabled(True)
+                self.activeButtons()
 
             else:
                 if result_passw == self.passwLE.text():
                     self.open_window()
-                    #MainWindow.close()
 
                 else:
                     Message("HIBAÜZENET", "Hoppá valami probléma adódott! Ellenőrizd a beírt adatokat, majd próbálkozz újra!")
-                    self.loginPB.setEnabled(True)
+                    self.activeButtons()
 
 
-    def open_window(self):
+    def open_window(self): #szűrő oldal meghívása
         self.window.close()
         name = self.nameLE.text()
         self.window = QtWidgets.QMainWindow()
-        self.ui = Continents_MainWindow(name)
+        self.ui = conFilter.Continents_MainWindow(name)
         self.ui.setupUi(self.window)
         self.window.show()
 

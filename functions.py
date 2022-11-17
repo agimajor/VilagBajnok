@@ -1,24 +1,23 @@
 from PySide2.QtWidgets import QMessageBox
-import PySide2.QtWidgets as QtWidgets
 from mysql.connector import MySQLConnection
 import mysql
+from PySide2.QtGui import QIcon
 
-
-def Message(title, text):
+def Message(title, text): #hibaüzenet a felhasználónak
         msg = QMessageBox()
         msg.setWindowTitle(title)
         msg.setIcon(QMessageBox.Warning)
+        msg.setWindowIcon(QIcon('globe_world_earth_planets_chool_icon_209251.png'))
         msg.setText(text)
         msg.exec()
 
-def Connection():
+def Connection(): #adatbázis kapcsolat
         try:
-            
+            con = mysql.connector.connect(host="mysql.nethely.hu", user="vilagbajnokdb", password="id15112202", database="vilagbajnokdb")
             #con = mysql.connector.connect(host="localhost", user="root", password="", database="vilagbajnok")
-            con = mysql.connector.connect(host="sql7.freemysqlhosting.net", user="sql7550831", password="DRpXDuHP1i", database="sql7550831")
             cur = con.cursor()
-        except:
 
+        except:
             con = None
             cur = None
 
@@ -26,9 +25,11 @@ def Connection():
                 return con, cur
 
 
-def clearStr(res):
+def clearStr(res): #nem hivánt karakterek kiszűrése
     for char in ["(", ")", "'", ",", "[", "]"]:
         res = res.replace(char, "")
     return res
+
+
 
 
