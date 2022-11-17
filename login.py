@@ -145,13 +145,7 @@ class Login_MainWindow(object):
         self.sleepButtons()
         self.window.close()
         subprocess.call(["python", "opener.py"])
-        #self.window = QtWidgets.QMainWindow()
-        #self.ui = opener.HomePage_MainWindow()
-        #self.ui.setupUi(self.window)
-        #self.window.show()
-
-        #subprocess.call(["python", "opener.py"])
-
+        
     def LogIn(self): #bejelentkezés ellenőrzése
 
         self.sleepButtons()
