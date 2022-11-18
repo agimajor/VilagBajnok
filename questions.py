@@ -204,7 +204,7 @@ class Quiz_MainWindow(object):
         self.answer3.setChecked(False)
         self.answer4.setChecked(False)
         self.group.setExclusive(True)
-        print(self.serial_number)
+        
         self.goodQuestions()
 
 
@@ -217,7 +217,7 @@ class Quiz_MainWindow(object):
             cur.execute(question)
             res1 = cur.fetchall()
             res1 = str(list(res1))
-            print(res1)
+            
 
             self.quest, self.a1, self.a2, self.a3, self.a4, self.good = res1.split(",")
 
