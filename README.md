@@ -3,7 +3,7 @@
 Maga a program a 7-8. osztályosok számára szól és a kontinensek téma köré lett felépítve.
 
 Az oktatóprogram Python futtató környezet nélküli használatához az alábbi linken lévő mappa letöltése szükséges.
-https://mega.nz/file/nuATgQTI  Jelszó: fV6l7cCKqe_lgUDLlnOQJmj03YEZMKfFBnW6UjSy2qA
+https://mega.nz/file/f6hC1ACA  Jelszó: MKI2K6TSk7hMhoeIlaMIDAipyDV05xVFhNnq7eATom0
 
 Ezt követően a mappában az opener.exe alkalmazás fájl megnyitásával van lehetőség a játék elindítására.
 
