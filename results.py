@@ -274,7 +274,7 @@ class Result_MainWindow(object):
     def addResults(self): #adatbázis adminisztráció 2
         con, cur = Connection()
         id = self.newId()
-        print(id)
+        
         if con is None or id is None:
             Message("HIBAÜZENET", "Adatbázis kapcsolati hiba! Ellenőrizd az internetelérésed!")
             self.activedButtons()
