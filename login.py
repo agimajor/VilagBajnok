@@ -6,7 +6,9 @@ from PySide2.QtWidgets import *
 import conFilter
 import logo_rc
 import subprocess
-from functions import Message, Connection
+from functions import Message, Connection, clearStr
+import opener
+import userInfo
 
 
 class Login_MainWindow(object):
@@ -166,7 +168,19 @@ class Login_MainWindow(object):
 
             else:
                 if result_passw == self.passwLE.text():
-                    self.open_window()
+                    names = 'select nev from adatok where nev =\''+self.nameLE.text()+"\'"
+                    cur.execute(names)
+                    name_res = cur.fetchall()
+                    name_res = clearStr(str(name_res))
+                    if name_res == self.nameLE.text():
+                        self.open_window()
+                    else:
+                        self.window.close()
+                        self.window = QtWidgets.QMainWindow()
+                        name = self.nameLE.text()
+                        self.ui = userInfo.Quest_MainWindow(name)
+                        self.ui.setupUi(self.window)
+                        self.window.show()
 
                 else:
                     Message("HIBAÜZENET", "Hoppá valami probléma adódott! Ellenőrizd a beírt adatokat, majd próbálkozz újra!")
